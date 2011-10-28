@@ -7,9 +7,29 @@ class Fretboard:
     takes a Tkinter.Tk() instance as an argument"""
     
     def __init__(self, master):
+
+        frame = Frame(master)
+        frame.pack()
         
         canvas = Canvas(master, bg='white', height=175, width=150)
         canvas.pack()
+        
+        circles = {}
+        def clear_circles():
+            for key in circles.keys():
+                canvas.delete(circles[key])
+                del circles[key]
+
+        self.clearButton = Button(frame, text='clear', command=clear_circles)
+        self.clearButton.pack(side=LEFT)
+
+        def export_canvas():
+            '''this will out to a postscript file in the same directory'''
+            canvas.update()
+            canvas.postscript(file='fretboard.ps')
+
+        self.exportButton = Button(frame, text='export', command=export_canvas)
+        self.exportButton.pack(side=LEFT)
         
         def make_grid(canvas):
             for x in range(12, 150, 25):
@@ -33,7 +53,6 @@ class Fretboard:
             for point in field(fieldCenter[0], fieldCenter[1]):
                 points[point] = fieldCenter
 
-        circles = {}
         def make_circle(event):
             if (event.x, event.y) in points.keys():
                 center = points[(event.x, event.y)]
